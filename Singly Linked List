@@ -1,0 +1,123 @@
+#include <iostream>
+using namespace std;
+
+// Define the structure for a node
+struct Node {
+    int data;       // Data part of the node
+    Node* next;     // Pointer to the next node
+};
+
+// Function to add a node at the start of the list
+void addAtStart(Node*& head, int value) {
+    Node* newNode = new Node(); // Create a new node
+    newNode->data = value;      // Set the data of the new node
+    newNode->next = head;       // Link the new node to the previous head
+    head = newNode;             // Update the head to be the new node
+}
+
+// Function to add a node at the end of the list
+void addAtEnd(Node*& head, int value) {
+    Node* newNode = new Node(); // Create a new node
+    newNode->data = value;      // Set the data of the new node
+    newNode->next = nullptr;    // This will be the last node, so its next pointer is null
+
+    if (head == nullptr) {      // If the list is empty, make the new node the head
+        head = newNode;
+    } else {
+        Node* current = head;   // Start from the head
+        while (current->next != nullptr) { // Traverse to the last node
+            current = current->next;
+        }
+        current->next = newNode; // Link the last node to the new node
+    }
+}
+
+void addAtPos(int position, Node*& head, int value) {
+    Node* newNode = new Node(); // Create a new node
+    newNode->data = value;      // Set the data of the new node
+
+    if (position <= 1 || head == nullptr) { // Adding at the beginning
+        newNode->next = head;   // Point new node to the current head
+        head = newNode;         // Update head to be the new node
+    } else {
+        Node* current = head;   // Start from the head
+        int currentPosition = 1;
+
+        // Traverse to the node just before the desired position
+        while (current->next != nullptr && currentPosition < position - 1) {
+            current = current->next;
+            currentPosition++;
+        }
+
+        if (current->next == nullptr && currentPosition < position - 1) { // Adding at the end
+            newNode->next = nullptr; // New node will be the last node
+            current->next = newNode;
+        } else { // Insert in the middle
+            newNode->next = current->next; // Link new node to the next node
+            current->next = newNode;       // Link current node to the new node
+        }
+    }
+}
+
+void deleteAtPos(int position, Node*& head) {
+    if (head == nullptr) { // If the list is empty, there's nothing to delete
+        cout << "List is empty." << endl;
+        return;
+    }
+
+    Node* temp;  // Temporary pointer to hold the node to be deleted
+
+    if (position <= 1) { // Deleting at the beginning
+        temp = head;           // Point temp to the current head
+        head = head->next;    // Update head to the next node
+        delete temp;           // Free the memory of the old head
+    } else {
+        Node* current = head; // Start from the head
+        int currentPosition = 1;
+
+        // Traverse to the node just before the one we want to delete
+        while (current->next != nullptr && currentPosition < position - 1) {
+            current = current->next;
+            currentPosition++;
+        }
+
+        if (current->next == nullptr) { // If position is beyond the end of the list
+            cout <<position<<" Position is out of range." << endl;
+            return;
+        }
+
+        temp = current->next;       // Point temp to the node to be deleted
+        current->next = temp->next; // Bypass the node to be deleted
+        delete temp;                 // Free the memory of the deleted node
+    }
+}
+
+
+// Function to print the list
+void printList(Node* head) {
+    Node* current = head;       // Start from the head
+    while (current != nullptr) { // Traverse until the end of the list
+        cout << current->data << " -> ";
+        current = current->next; // Move to the next node
+    }
+    cout << "NULL" << endl;     // End of list
+}
+
+int main() {
+    Node* head = nullptr;  // Initialize head to nullptr (empty list)
+
+    addAtStart(head, 10);  // Add a node with data 10 at the start
+    addAtStart(head, 20);  // Add a node with data 20 at the start
+    addAtStart(head, 30);  // Add a node with data 30 at the start
+    addAtStart(head, 34);
+    addAtEnd(head,55);
+    addAtPos(4,head,60);
+    deleteAtPos(1,head);
+    deleteAtPos(7,head);
+    deleteAtPos(4,head);
+    deleteAtPos(9,head);
+    
+    printList(head);       // Output: 30 -> 20 -> 10 -> NULL
+
+    return 0;
+}
